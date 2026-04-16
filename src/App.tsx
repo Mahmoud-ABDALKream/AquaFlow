@@ -1,39 +1,35 @@
-import { Hero } from './components/Hero'
-import { Portfolio } from './components/Portfolio'
-import { Awards } from './components/Awards'
-import { About } from './components/About'
-import { Services } from './components/Services'
-import { Team } from './components/Team'
-import { Contact } from './components/Contact'
-import { Footer } from './components/Footer'
+import { AquaHero } from './components/aqua/AquaHero'
+import { AquaAbout } from './components/aqua/AquaAbout'
+import { AquaProblem } from './components/aqua/AquaProblem'
+import { AquaFeatures } from './components/aqua/AquaFeatures'
+import { AquaHowItWorks } from './components/aqua/AquaHowItWorks'
+import { AquaAppShowcase } from './components/aqua/AquaAppShowcase'
+import { AquaTechStack } from './components/aqua/AquaTechStack'
+import { AquaImpact } from './components/aqua/AquaImpact'
+import { AquaAchievements } from './components/aqua/AquaAchievements'
+import { AquaTeam } from './components/aqua/AquaTeam'
+import { AquaFuture } from './components/aqua/AquaFuture'
+import { AquaFooter } from './components/aqua/AquaFooter'
+import { AquaNav } from './components/aqua/AquaNav'
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-background text-foreground" style={{ overflow: 'visible' }}>
-      <main className="relative" role="main" style={{ overflow: 'visible' }}>
-        <section id="hero" aria-label="Hero section">
-          <Hero />
-        </section>
-        <section id="portfolio" aria-label="Portfolio section">
-          <Portfolio />
-        </section>
-        <section id="awards" aria-label="Awards section">
-          <Awards />
-        </section>
-        <section id="about" aria-label="About section">
-          <About />
-        </section>
-        <section id="services" aria-label="Services section">
-          <Services />
-        </section>
-        <section id="team" aria-label="Team section" style={{ overflow: 'visible', height: 'auto', minHeight: '0', maxHeight: 'none' }}>
-          <Team />
-        </section>
-        <section id="contact" aria-label="Contact section">
-          <Contact />
-        </section>
+    <div className="min-h-screen bg-background text-foreground">
+      <AquaNav />
+      <main>
+        <AquaHero />
+        <AquaAbout />
+        <AquaProblem />
+        <AquaFeatures />
+        <AquaHowItWorks />
+        <AquaAppShowcase />
+        <AquaTechStack />
+        <AquaImpact />
+        <AquaAchievements />
+        <AquaTeam />
+        <AquaFuture />
       </main>
-      <Footer />
+      <AquaFooter />
     </div>
   )
 }
