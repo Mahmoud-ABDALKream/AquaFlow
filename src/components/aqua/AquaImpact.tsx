@@ -95,7 +95,9 @@ export function AquaImpact() {
               <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-5">
                 <item.icon className="w-8 h-8 text-[#00d4ff]" />
               </div>
-              <div className="text-5xl font-bold text-white mb-2">{item.value}</div>
+              <div className="text-5xl font-bold text-white mb-2 tabular-nums">
+                <CountUp to={item.target} suffix={item.suffix} start={inView} />
+              </div>
               <div className="text-[#00d4ff] font-semibold mb-2">{item.label}</div>
               <p className="text-white/60 text-sm">{item.desc}</p>
             </motion.div>
