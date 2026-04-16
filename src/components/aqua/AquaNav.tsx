@@ -29,9 +29,9 @@ export function AquaNav() {
         scrolled ? 'bg-background/80 backdrop-blur-xl shadow-lg border-b border-border' : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <img src={logo} alt="Aqua Flow" className="h-8 w-8 object-contain" />
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <a href="#" className="flex items-center gap-3">
+          <img src={logo} alt="Aqua Flow" className="h-14 w-14 md:h-16 md:w-16 object-contain" />
           <span className="font-bold text-lg" style={{ fontFamily: 'Space Grotesk' }}>
             Aqua<span className="text-accent-cyan">Flow</span>
           </span>

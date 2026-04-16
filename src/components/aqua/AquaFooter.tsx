@@ -7,8 +7,8 @@ export function AquaFooter() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <img src={logo} alt="Aqua Flow" className="h-8 w-8 object-contain" />
+            <div className="flex items-center gap-3 mb-4">
+              <img src={logo} alt="Aqua Flow" className="h-14 w-14 object-contain" />
               <span className="font-bold text-lg" style={{ fontFamily: 'Space Grotesk' }}>
                 Aqua<span className="text-[#00d4ff]">Flow</span>
               </span>
