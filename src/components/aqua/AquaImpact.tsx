@@ -92,8 +92,37 @@ export function AquaImpact() {
               transition={{ duration: 0.5, delay: 0.2 + i * 0.15 }}
               className="p-8 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 text-center hover:bg-white/15 transition-all duration-300"
             >
-              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mx-auto mb-5">
-                <item.icon className="w-8 h-8 text-[#00d4ff]" />
+              <div className="relative w-24 h-24 mx-auto mb-5">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="4"
+                  />
+                  <motion.circle
+                    cx="50"
+                    cy="50"
+                    r="45"
+                    fill="none"
+                    stroke="#00d4ff"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    pathLength={1}
+                    strokeDasharray={1}
+                    initial={{ strokeDashoffset: 1 }}
+                    animate={inView ? { strokeDashoffset: 1 - item.target / 100 } : {}}
+                    transition={{ duration: 2, delay: 0.2 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.6))' }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center">
+                    <item.icon className="w-7 h-7 text-[#00d4ff]" />
+                  </div>
+                </div>
               </div>
               <div className="text-5xl font-bold text-white mb-2 tabular-nums">
                 <CountUp to={item.target} suffix={item.suffix} start={inView} />
