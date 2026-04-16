@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+import { AquaLoader } from './components/aqua/AquaLoader'
 import { AquaHero } from './components/aqua/AquaHero'
 import { AquaAbout } from './components/aqua/AquaAbout'
 import { AquaProblem } from './components/aqua/AquaProblem'
@@ -13,8 +15,22 @@ import { AquaFooter } from './components/aqua/AquaFooter'
 import { AquaNav } from './components/aqua/AquaNav'
 
 export default function App() {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (loading) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [loading])
+
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {loading && <AquaLoader onComplete={() => setLoading(false)} />}
       <AquaNav />
       <main>
         <AquaHero />
