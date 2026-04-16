@@ -1,11 +1,35 @@
-import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState, useCallback } from 'react'
 import productImage from '@/assets/product-device.jpg'
+
+type Ripple = { id: number; x: number; y: number }
 
 export function AquaHero() {
   const sectionRef = useRef<HTMLElement>(null)
   const prefersReducedMotion = useReducedMotion()
+  const [ripples, setRipples] = useState<Ripple[]>([])
+  const lastRippleRef = useRef(0)
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLElement>) => {
+      if (prefersReducedMotion) return
+      const now = performance.now()
+      // Throttle to ~one ripple every 80ms for smoothness
+      if (now - lastRippleRef.current < 80) return
+      lastRippleRef.current = now
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      const id = now
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      setRipples((prev) => [...prev.slice(-12), { id, x, y }])
+      // Auto-cleanup after animation
+      window.setTimeout(() => {
+        setRipples((prev) => prev.filter((r) => r.id !== id))
+      }, 1400)
+    },
+    [prefersReducedMotion]
+  )
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
