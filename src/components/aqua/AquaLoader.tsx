@@ -8,57 +8,91 @@ interface AquaLoaderProps {
 }
 
 const PHASES = [
-  'Initializing AquaFlow',
-  'Calibrating sensors',
-  'Syncing flow data',
-  'Optimizing pressure',
-  'Ready to dive in',
+  { label: 'Booting AquaFlow OS', code: 'SYS.INIT' },
+  { label: 'Establishing secure uplink', code: 'NET.LINK' },
+  { label: 'Calibrating flow sensors', code: 'SNS.CAL' },
+  { label: 'Streaming telemetry', code: 'TLM.SYNC' },
+  { label: 'Optimizing pressure model', code: 'AI.OPT' },
+  { label: 'System ready', code: 'SYS.OK' },
 ]
 
-export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
+// Deterministic pseudo-random for stable SSR-safe layouts
+const seeded = (i: number, salt = 1) => {
+  const x = Math.sin(i * 9301 + salt * 49297) * 233280
+  return x - Math.floor(x)
+}
+
+export function AquaLoader({ onComplete, duration = 4600 }: AquaLoaderProps) {
   const [progress, setProgress] = useState(0)
   const [visible, setVisible] = useState(true)
+  const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
     const start = performance.now()
     let raf = 0
     const tick = (t: number) => {
       const elapsed = t - start
-      // ease-out for a more cinematic finish
       const linear = Math.min(1, elapsed / duration)
-      const eased = 1 - Math.pow(1 - linear, 1.6)
+      const eased = 1 - Math.pow(1 - linear, 1.7)
       setProgress(eased * 100)
       if (linear < 1) raf = requestAnimationFrame(tick)
       else {
         setTimeout(() => {
           setVisible(false)
           onComplete?.()
-        }, 600)
+        }, 700)
       }
     }
     raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
+    const clock = setInterval(() => setNow(new Date()), 1000)
+    return () => {
+      cancelAnimationFrame(raf)
+      clearInterval(clock)
+    }
   }, [duration, onComplete])
 
-  const phase = PHASES[Math.min(PHASES.length - 1, Math.floor((progress / 100) * PHASES.length))]
+  const phaseIndex = Math.min(
+    PHASES.length - 1,
+    Math.floor((progress / 100) * PHASES.length),
+  )
+  const phase = PHASES[phaseIndex]
 
-  // Pre-compute bubble + particle positions once
+  // Live-feel telemetry values driven by progress
+  const flow = (12 + Math.sin(progress / 6) * 4 + progress * 0.18).toFixed(1)
+  const pressure = (2.1 + Math.cos(progress / 5) * 0.4).toFixed(2)
+  const ph = (7.0 + Math.sin(progress / 9) * 0.25).toFixed(2)
+  const temp = (21.4 + Math.sin(progress / 11) * 0.6).toFixed(1)
+  const nodes = Math.min(128, Math.floor(progress * 1.28))
+
   const bubbles = useMemo(
     () =>
-      Array.from({ length: 26 }).map(() => ({
-        size: 5 + Math.random() * 26,
-        left: Math.random() * 100,
-        dur: 7 + Math.random() * 10,
-        delay: Math.random() * 8,
-        sway: 10 + Math.random() * 30,
+      Array.from({ length: 22 }).map((_, i) => ({
+        size: 4 + seeded(i, 2) * 22,
+        left: seeded(i, 3) * 100,
+        dur: 8 + seeded(i, 4) * 9,
+        delay: seeded(i, 5) * 8,
       })),
     [],
   )
 
   const orbitParticles = useMemo(
-    () => Array.from({ length: 8 }).map((_, i) => ({ angle: (i / 8) * 360, delay: i * 0.4 })),
+    () => Array.from({ length: 6 }).map((_, i) => ({ angle: (i / 6) * 360, delay: i * 0.5 })),
     [],
   )
+
+  const sonarRings = [0, 1.2, 2.4]
+
+  // Mini sparkline waveform path
+  const sparkPath = useMemo(() => {
+    const pts = Array.from({ length: 40 }).map((_, i) => {
+      const x = (i / 39) * 100
+      const y = 50 + Math.sin(i * 0.6 + progress / 8) * 18 + Math.sin(i * 0.22) * 6
+      return `${x.toFixed(2)},${y.toFixed(2)}`
+    })
+    return `M ${pts.join(' L ')}`
+  }, [progress])
+
+  const timeStr = now.toLocaleTimeString('en-GB', { hour12: false })
 
   return (
     <AnimatePresence>
@@ -68,63 +102,56 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            scale: 1.05,
-            filter: 'blur(8px)',
-            transition: { duration: 0.9, ease: 'easeInOut' },
+            scale: 1.04,
+            filter: 'blur(10px)',
+            transition: { duration: 1, ease: [0.4, 0, 0.2, 1] },
           }}
           className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden"
           style={{
             background:
-              'radial-gradient(ellipse at top, #003566 0%, #001d3d 55%, #00060f 100%)',
+              'radial-gradient(ellipse at 50% 20%, #003566 0%, #001a36 50%, #00060f 100%)',
           }}
         >
-          {/* Deep water vignette */}
+          {/* Vignette */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background:
-                'radial-gradient(ellipse at center, transparent 30%, rgba(0,6,15,0.7) 100%)',
+                'radial-gradient(ellipse at center, transparent 30%, rgba(0,6,15,0.85) 100%)',
             }}
           />
 
-          {/* Aurora glow blobs */}
+          {/* Aurora ambient blobs */}
           <div className="absolute inset-0 pointer-events-none">
             <div
-              className="absolute -top-40 -left-40 w-[44rem] h-[44rem] rounded-full blur-3xl opacity-50 animate-aurora"
+              className="absolute -top-40 -left-40 w-[44rem] h-[44rem] rounded-full blur-3xl opacity-40 animate-aurora"
               style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.55), transparent 70%)' }}
             />
             <div
-              className="absolute -bottom-48 -right-48 w-[50rem] h-[50rem] rounded-full blur-3xl opacity-40 animate-aurora"
+              className="absolute -bottom-48 -right-48 w-[50rem] h-[50rem] rounded-full blur-3xl opacity-35 animate-aurora"
               style={{
                 background: 'radial-gradient(circle, rgba(10,106,191,0.6), transparent 70%)',
                 animationDelay: '5s',
               }}
             />
-            <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] rounded-full blur-3xl opacity-30 animate-aurora"
-              style={{
-                background: 'radial-gradient(circle, rgba(20,184,166,0.5), transparent 70%)',
-                animationDelay: '2s',
-              }}
-            />
           </div>
 
           {/* Caustic shimmer */}
-          <div className="absolute inset-0 pointer-events-none mix-blend-overlay">
+          <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-80">
             <div
               className="absolute top-1/4 left-1/3 w-[28rem] h-[28rem] rounded-full blur-3xl animate-shimmer"
-              style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.45), transparent 70%)' }}
+              style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.35), transparent 70%)' }}
             />
             <div
               className="absolute bottom-1/4 right-1/3 w-[24rem] h-[24rem] rounded-full blur-3xl animate-shimmer"
               style={{
-                background: 'radial-gradient(circle, rgba(0,212,255,0.55), transparent 70%)',
+                background: 'radial-gradient(circle, rgba(0,212,255,0.45), transparent 70%)',
                 animationDelay: '6s',
               }}
             />
           </div>
 
-          {/* Rising bubbles */}
+          {/* Bubbles */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             {bubbles.map((b, i) => (
               <span
@@ -136,8 +163,8 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                   width: b.size,
                   height: b.size,
                   background:
-                    'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(0,212,255,0.25) 60%, transparent 70%)',
-                  border: '1px solid rgba(255,255,255,0.4)',
+                    'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(0,212,255,0.2) 60%, transparent 70%)',
+                  border: '1px solid rgba(255,255,255,0.3)',
                   animationDuration: `${b.dur}s`,
                   animationDelay: `${b.delay}s`,
                   filter: 'drop-shadow(0 0 6px rgba(0,212,255,0.4))',
@@ -146,12 +173,12 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
             ))}
           </div>
 
-          {/* Subtle grid horizon */}
+          {/* Perspective grid horizon */}
           <div
-            className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none opacity-20"
+            className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none opacity-25"
             style={{
               backgroundImage:
-                'linear-gradient(to right, rgba(0,212,255,0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,212,255,0.4) 1px, transparent 1px)',
+                'linear-gradient(to right, rgba(0,212,255,0.45) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,212,255,0.45) 1px, transparent 1px)',
               backgroundSize: '60px 60px',
               maskImage: 'linear-gradient(to top, black, transparent)',
               WebkitMaskImage: 'linear-gradient(to top, black, transparent)',
@@ -160,20 +187,45 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
             }}
           />
 
-          {/* Center stage */}
+          {/* TOP HUD BAR */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="absolute top-6 left-6 right-6 flex items-center justify-between text-[10px] md:text-[11px] tracking-[0.3em] uppercase text-white/60 font-mono pointer-events-none"
+          >
+            <div className="flex items-center gap-3">
+              <span className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
+                <span className="text-emerald-300/90">Online</span>
+              </span>
+              <span className="hidden md:inline text-white/30">|</span>
+              <span className="hidden md:inline">AquaFlow OS · v2.4.1</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="hidden md:inline">Region · EU-WEST</span>
+              <span className="hidden md:inline text-white/30">|</span>
+              <span className="tabular-nums text-white/80">{timeStr}</span>
+            </div>
+          </motion.div>
+
+          {/* CENTER STAGE */}
           <div className="relative z-10 flex flex-col items-center px-6">
-            {/* Droplet stage */}
-            <div className="relative w-56 h-56 md:w-72 md:h-72 flex items-center justify-center mb-12">
-              {/* Outer concentric rings */}
-              {[0, 0.7, 1.4, 2.1].map((delay, i) => (
+            {/* Droplet stage with sonar */}
+            <div className="relative w-60 h-60 md:w-80 md:h-80 flex items-center justify-center mb-10">
+              {/* Sonar concentric rings */}
+              {sonarRings.map((delay, i) => (
                 <motion.span
-                  key={i}
+                  key={`sonar-${i}`}
                   className="absolute inset-0 rounded-full border"
-                  style={{ borderColor: 'rgba(0, 212, 255, 0.45)' }}
-                  initial={{ scale: 0.55, opacity: 0.9 }}
-                  animate={{ scale: 1.8, opacity: 0 }}
+                  style={{ borderColor: 'rgba(0, 212, 255, 0.4)' }}
+                  initial={{ scale: 0.5, opacity: 0.9 }}
+                  animate={{ scale: 1.9, opacity: 0 }}
                   transition={{
-                    duration: 3.2,
+                    duration: 3.6,
                     repeat: Infinity,
                     ease: 'easeOut',
                     delay,
@@ -181,21 +233,40 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                 />
               ))}
 
+              {/* Crosshair brackets */}
+              {['top-0 left-1/2 -translate-x-1/2 -translate-y-2', 'bottom-0 left-1/2 -translate-x-1/2 translate-y-2', 'left-0 top-1/2 -translate-y-1/2 -translate-x-2', 'right-0 top-1/2 -translate-y-1/2 translate-x-2'].map((cls, i) => (
+                <span
+                  key={`cross-${i}`}
+                  className={`absolute ${cls} text-cyan-300/70 text-xs font-mono`}
+                >
+                  +
+                </span>
+              ))}
+
               {/* Rotating dashed orbit */}
               <motion.svg
                 className="absolute inset-0"
                 viewBox="0 0 100 100"
                 animate={{ rotate: 360 }}
-                transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
               >
                 <circle
                   cx="50"
                   cy="50"
                   r="48"
                   fill="none"
-                  stroke="rgba(0,212,255,0.35)"
-                  strokeWidth="0.4"
+                  stroke="rgba(0,212,255,0.3)"
+                  strokeWidth="0.3"
                   strokeDasharray="1 3"
+                />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="40"
+                  fill="none"
+                  stroke="rgba(0,212,255,0.18)"
+                  strokeWidth="0.25"
+                  strokeDasharray="0.6 2.4"
                 />
               </motion.svg>
 
@@ -203,7 +274,7 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
               <motion.div
                 className="absolute inset-0"
                 animate={{ rotate: -360 }}
-                transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
               >
                 {orbitParticles.map((p, i) => (
                   <motion.span
@@ -216,15 +287,15 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                       transformOrigin: 'center',
                     }}
                     animate={{ opacity: [0.4, 1, 0.4] }}
-                    transition={{ duration: 2.4, repeat: Infinity, delay: p.delay }}
+                    transition={{ duration: 2.6, repeat: Infinity, delay: p.delay }}
                   />
                 ))}
               </motion.div>
 
-              {/* Soft halo */}
+              {/* Soft halo behind logo */}
               <div
-                className="absolute inset-6 rounded-full blur-2xl"
-                style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.7), transparent 70%)' }}
+                className="absolute inset-8 rounded-full blur-2xl"
+                style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.6), transparent 70%)' }}
               />
 
               {/* Progress ring (gradient) */}
@@ -248,8 +319,8 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                   cy="50"
                   r="44"
                   fill="none"
-                  stroke="rgba(255,255,255,0.12)"
-                  strokeWidth="1.5"
+                  stroke="rgba(255,255,255,0.1)"
+                  strokeWidth="1.2"
                 />
                 <circle
                   cx="50"
@@ -257,16 +328,37 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                   r="44"
                   fill="none"
                   stroke="url(#aqua-loader-grad)"
-                  strokeWidth="2.6"
+                  strokeWidth="2.4"
                   strokeLinecap="round"
                   strokeDasharray={2 * Math.PI * 44}
                   strokeDashoffset={2 * Math.PI * 44 * (1 - progress / 100)}
                   filter="url(#aqua-loader-glow)"
                   style={{ transition: 'stroke-dashoffset 0.1s linear' }}
                 />
+                {/* Progress tick marks */}
+                {Array.from({ length: 60 }).map((_, i) => {
+                  const a = (i / 60) * Math.PI * 2
+                  const r1 = 36
+                  const r2 = i % 5 === 0 ? 33 : 34.5
+                  const x1 = 50 + Math.cos(a) * r1
+                  const y1 = 50 + Math.sin(a) * r1
+                  const x2 = 50 + Math.cos(a) * r2
+                  const y2 = 50 + Math.sin(a) * r2
+                  return (
+                    <line
+                      key={i}
+                      x1={x1}
+                      y1={y1}
+                      x2={x2}
+                      y2={y2}
+                      stroke="rgba(255,255,255,0.18)"
+                      strokeWidth="0.3"
+                    />
+                  )
+                })}
               </svg>
 
-              {/* Liquid fill clipped to a circle behind logo */}
+              {/* Liquid fill clipped to circle */}
               <div className="absolute inset-8 rounded-full overflow-hidden border border-white/10 backdrop-blur-sm bg-white/5">
                 <div
                   className="absolute inset-x-0 bottom-0 transition-[height] duration-200 ease-linear"
@@ -276,10 +368,9 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                     className="absolute inset-0"
                     style={{
                       background:
-                        'linear-gradient(180deg, rgba(0,212,255,0.55) 0%, rgba(10,106,191,0.85) 100%)',
+                        'linear-gradient(180deg, rgba(0,212,255,0.5) 0%, rgba(10,106,191,0.85) 100%)',
                     }}
                   />
-                  {/* Wave surface */}
                   <svg
                     className="absolute -top-3 left-0 w-[200%] h-6 animate-wave"
                     viewBox="0 0 1200 24"
@@ -303,19 +394,22 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                 </div>
               </div>
 
-              {/* Logo with float */}
+              {/* Logo */}
               <motion.img
                 src={logo}
                 alt="AquaFlow"
-                className="relative z-10 w-28 h-28 md:w-36 md:h-36 object-contain drop-shadow-[0_0_30px_rgba(0,212,255,0.9)]"
-                animate={{ y: [0, -10, 0], scale: [1, 1.04, 1] }}
-                transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative z-10 w-28 h-28 md:w-40 md:h-40 object-contain drop-shadow-[0_0_30px_rgba(0,212,255,0.9)]"
+                animate={{ y: [0, -8, 0], scale: [1, 1.03, 1] }}
+                transition={{ duration: 4.8, repeat: Infinity, ease: 'easeInOut' }}
               />
 
-              {/* Scanning beam */}
+              {/* Sweeping radar beam */}
               <motion.div
                 className="absolute inset-0 rounded-full overflow-hidden pointer-events-none"
-                style={{ maskImage: 'radial-gradient(circle, black 60%, transparent 62%)', WebkitMaskImage: 'radial-gradient(circle, black 60%, transparent 62%)' }}
+                style={{
+                  maskImage: 'radial-gradient(circle, black 60%, transparent 62%)',
+                  WebkitMaskImage: 'radial-gradient(circle, black 60%, transparent 62%)',
+                }}
               >
                 <motion.div
                   className="absolute left-1/2 top-1/2 w-[160%] h-[2px] origin-left"
@@ -325,7 +419,7 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                     boxShadow: '0 0 14px rgba(0,212,255,0.9)',
                   }}
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
+                  transition={{ duration: 3.8, repeat: Infinity, ease: 'linear' }}
                 />
               </motion.div>
             </div>
@@ -369,25 +463,80 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 1.4 }}
-                className="mt-4 text-xs md:text-sm text-white/70 tracking-[0.45em] uppercase"
+                className="mt-4 text-[10px] md:text-xs text-white/70 tracking-[0.5em] uppercase font-mono"
               >
-                Smart Water Intelligence
+                Smart Water Intelligence Platform
               </motion.p>
             </motion.div>
 
-            {/* Phase + progress */}
-            <div className="mt-12 w-72 md:w-96">
+            {/* Telemetry tiles */}
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 1.6 }}
+              className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 w-[20rem] md:w-[34rem]"
+            >
+              {[
+                { k: 'Flow', v: flow, u: 'L/min' },
+                { k: 'Pressure', v: pressure, u: 'bar' },
+                { k: 'pH', v: ph, u: '' },
+                { k: 'Temp', v: temp, u: '°C' },
+              ].map((m, i) => (
+                <motion.div
+                  key={m.k}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 1.7 + i * 0.08 }}
+                  className="relative rounded-md border border-cyan-300/15 bg-white/[0.03] backdrop-blur-sm px-3 py-2 overflow-hidden"
+                >
+                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/60 to-transparent" />
+                  <div className="text-[9px] tracking-[0.3em] uppercase text-white/50 font-mono">
+                    {m.k}
+                  </div>
+                  <div className="mt-0.5 flex items-baseline gap-1">
+                    <span
+                      className="text-base md:text-lg text-white tabular-nums"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600 }}
+                    >
+                      {m.v}
+                    </span>
+                    <span className="text-[10px] text-cyan-300/70 font-mono">{m.u}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Phase row + sparkline */}
+            <div className="mt-8 w-[20rem] md:w-[34rem]">
+              <div className="flex items-center justify-between text-[10px] md:text-[11px] tracking-[0.3em] uppercase font-mono mb-2">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={phase.code}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.4 }}
+                    className="flex items-center gap-2 text-white/80"
+                  >
+                    <span className="text-cyan-300">[{phase.code}]</span>
+                    <span>{phase.label}</span>
+                  </motion.div>
+                </AnimatePresence>
+                <span className="tabular-nums text-white/90">
+                  {String(Math.floor(progress)).padStart(3, '0')}%
+                </span>
+              </div>
+
+              {/* Progress bar */}
               <div className="relative h-[3px] w-full rounded-full bg-white/10 overflow-hidden">
                 <motion.div
                   className="absolute inset-y-0 left-0 rounded-full"
                   style={{
-                    background:
-                      'linear-gradient(90deg, #ffffff, #00d4ff 50%, #0a6abf)',
+                    background: 'linear-gradient(90deg, #ffffff, #00d4ff 50%, #0a6abf)',
                     width: `${progress}%`,
                     boxShadow: '0 0 14px rgba(0,212,255,0.9)',
                   }}
                 />
-                {/* Trailing shimmer */}
                 <motion.div
                   className="absolute inset-y-0 w-24 -translate-x-full"
                   style={{
@@ -399,22 +548,37 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
                   transition={{ duration: 1.4, repeat: Infinity }}
                 />
               </div>
-              <div className="mt-4 flex items-center justify-between text-[11px] tracking-[0.3em] uppercase text-white/60">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={phase}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.4 }}
-                    className="text-white/80"
-                  >
-                    {phase}
-                  </motion.span>
-                </AnimatePresence>
-                <span className="tabular-nums text-white/90">
-                  {String(Math.floor(progress)).padStart(2, '0')}%
-                </span>
+
+              {/* Sparkline + meta */}
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <svg
+                  viewBox="0 0 100 100"
+                  preserveAspectRatio="none"
+                  className="h-8 w-2/3"
+                >
+                  <defs>
+                    <linearGradient id="spark-grad" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stopColor="#00d4ff" stopOpacity="0.5" />
+                      <stop offset="100%" stopColor="#00d4ff" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={`${sparkPath} L 100,100 L 0,100 Z`} fill="url(#spark-grad)" />
+                  <path
+                    d={sparkPath}
+                    fill="none"
+                    stroke="#00d4ff"
+                    strokeWidth="1.2"
+                    vectorEffect="non-scaling-stroke"
+                  />
+                </svg>
+                <div className="text-right text-[10px] tracking-[0.25em] uppercase text-white/50 font-mono leading-tight">
+                  <div>
+                    Nodes <span className="text-cyan-300/90 tabular-nums">{nodes}/128</span>
+                  </div>
+                  <div>
+                    Latency <span className="text-cyan-300/90 tabular-nums">{(28 - progress * 0.12).toFixed(0)}ms</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -461,7 +625,7 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
             </svg>
           </div>
 
-          {/* Edge corner brackets — premium HUD feel */}
+          {/* HUD corner brackets */}
           <div className="absolute inset-6 pointer-events-none">
             {[
               'top-0 left-0 border-l-2 border-t-2',
@@ -479,6 +643,18 @@ export function AquaLoader({ onComplete, duration = 4200 }: AquaLoaderProps) {
               />
             ))}
           </div>
+
+          {/* Bottom legal-style strip */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="absolute bottom-3 left-6 right-6 flex items-center justify-between text-[9px] md:text-[10px] tracking-[0.3em] uppercase text-white/40 font-mono pointer-events-none"
+          >
+            <span>© AquaFlow Systems</span>
+            <span className="hidden md:inline">Encrypted Channel · TLS 1.3</span>
+            <span>Build {timeStr.replace(/:/g, '')}</span>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
