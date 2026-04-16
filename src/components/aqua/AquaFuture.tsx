@@ -1,4 +1,4 @@
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { useRef } from 'react'
 import { Brain, Zap, LineChart } from 'lucide-react'
 
@@ -9,13 +9,39 @@ const visions = [
 ]
 
 export function AquaFuture() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-100px' })
+  const prefersReducedMotion = useReducedMotion()
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'end start'],
+  })
+
+  const glowY = useTransform(scrollYProgress, [0, 1], ['0%', prefersReducedMotion ? '0%' : '-25%'])
+  const headerY = useTransform(scrollYProgress, [0, 1], ['0%', prefersReducedMotion ? '0%' : '-12%'])
+  const cardsY = useTransform(scrollYProgress, [0, 1], ['0%', prefersReducedMotion ? '0%' : '8%'])
 
   return (
-    <section className="py-24 lg:py-32 bg-background" ref={ref}>
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="relative py-24 lg:py-32 bg-background overflow-hidden" ref={ref}>
+      {/* Parallax background glow */}
+      <motion.div style={{ y: glowY }} className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute top-1/4 left-1/3 w-[500px] h-[500px] rounded-full blur-[120px] opacity-50 animate-aurora"
+          style={{ background: 'radial-gradient(circle, hsl(var(--primary) / 0.15), transparent 70%)' }}
+        />
+        <div
+          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full blur-[100px] opacity-40 animate-aurora"
+          style={{
+            background: 'radial-gradient(circle, hsl(var(--accent) / 0.18), transparent 70%)',
+            animationDelay: '6s',
+          }}
+        />
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
+          style={{ y: headerY }}
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -30,7 +56,7 @@ export function AquaFuture() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <motion.div style={{ y: cardsY }} className="grid md:grid-cols-3 gap-8">
           {visions.map((v, i) => (
             <motion.div
               key={v.title}
@@ -46,7 +72,7 @@ export function AquaFuture() {
               <p className="text-muted-foreground leading-relaxed">{v.desc}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )
