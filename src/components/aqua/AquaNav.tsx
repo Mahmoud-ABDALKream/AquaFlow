@@ -31,7 +31,7 @@ export function AquaNav() {
     >
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <a href="#" className="flex items-center gap-3">
-          <img src={logo} alt="Aqua Flow" className="h-14 w-14 md:h-16 md:w-16 object-contain" />
+          <img src={logo} alt="Aqua Flow" className="h-12 md:h-14 w-auto object-contain" />
           <span className={`font-bold text-lg transition-colors ${scrolled ? 'text-foreground' : 'text-white'}`} style={{ fontFamily: 'Space Grotesk' }}>
             Aqua<span className="text-accent-cyan">Flow</span>
           </span>
