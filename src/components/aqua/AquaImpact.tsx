@@ -1,12 +1,34 @@
-import { motion, useInView, useScroll, useTransform, useReducedMotion } from 'framer-motion'
-import { useRef } from 'react'
+import { motion, useInView, useScroll, useTransform, useReducedMotion, useMotionValue, animate } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
 import { Leaf, Droplets, TrendingUp } from 'lucide-react'
 
 const impacts = [
-  { icon: Droplets, value: '30%', label: 'Water Saved', desc: 'Average reduction in household water consumption.' },
-  { icon: Leaf, value: '100%', label: 'Sustainable', desc: 'Eco-friendly design promoting conservation.' },
-  { icon: TrendingUp, value: '50%', label: 'Cost Reduction', desc: 'Lower water bills through smart management.' },
+  { icon: Droplets, target: 30, suffix: '%', label: 'Water Saved', desc: 'Average reduction in household water consumption.' },
+  { icon: Leaf, target: 100, suffix: '%', label: 'Sustainable', desc: 'Eco-friendly design promoting conservation.' },
+  { icon: TrendingUp, target: 50, suffix: '%', label: 'Cost Reduction', desc: 'Lower water bills through smart management.' },
 ]
+
+function CountUp({ to, suffix = '', start, duration = 2 }: { to: number; suffix?: string; start: boolean; duration?: number }) {
+  const count = useMotionValue(0)
+  const [display, setDisplay] = useState(0)
+  const prefersReducedMotion = useReducedMotion()
+
+  useEffect(() => {
+    if (!start) return
+    if (prefersReducedMotion) {
+      setDisplay(to)
+      return
+    }
+    const controls = animate(count, to, {
+      duration,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    })
+    return () => controls.stop()
+  }, [start, to, duration, count, prefersReducedMotion])
+
+  return <>{display}{suffix}</>
+}
 
 export function AquaImpact() {
   const ref = useRef<HTMLElement>(null)
