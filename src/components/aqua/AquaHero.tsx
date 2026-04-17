@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform, useReducedMotion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { useRef, useMemo, useState, useCallback } from 'react'
-import productImage from '@/assets/product-device.jpg'
+import { AquaHeroModel } from './AquaHeroModel'
 
 type Ripple = { id: number; x: number; y: number }
 
@@ -213,13 +213,11 @@ export function AquaHero() {
           transition={{ duration: 1, delay: 0.3 }}
           className="hidden lg:flex justify-center"
         >
-          <div className="relative">
-            <div className="absolute inset-0 bg-[#00d4ff]/20 rounded-full blur-[100px]" />
-            <img
-              src={productImage}
-              alt="Aqua Flow Smart Device"
-              className="relative z-10 w-80 h-auto drop-shadow-2xl animate-float"
-            />
+          <div className="relative w-full max-w-[560px]">
+            <div className="absolute inset-0 bg-[#00d4ff]/20 rounded-full blur-[120px]" />
+            <div className="relative z-10">
+              <AquaHeroModel />
+            </div>
           </div>
         </motion.div>
       </motion.div>

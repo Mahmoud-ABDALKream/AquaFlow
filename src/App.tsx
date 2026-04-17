@@ -6,7 +6,6 @@ import { AquaProblem } from './components/aqua/AquaProblem'
 import { AquaFeatures } from './components/aqua/AquaFeatures'
 import { AquaHowItWorks } from './components/aqua/AquaHowItWorks'
 import { AquaAppShowcase } from './components/aqua/AquaAppShowcase'
-import { AquaModel3D } from './components/aqua/AquaModel3D'
 import { AquaTechStack } from './components/aqua/AquaTechStack'
 import { AquaImpact } from './components/aqua/AquaImpact'
 import { AquaAchievements } from './components/aqua/AquaAchievements'
@@ -35,7 +34,6 @@ export default function App() {
       <AquaNav />
       <main>
         <AquaHero />
-        <AquaModel3D />
         <AquaAbout />
         <AquaProblem />
         <AquaFeatures />
