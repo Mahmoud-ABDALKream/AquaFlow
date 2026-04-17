@@ -20,11 +20,11 @@ function Model() {
   })
 
   return (
-    <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.5}>
-      <group ref={group} dispose={null}>
-        <primitive object={scene} scale={1.6} position={[0, -0.2, 0]} />
-      </group>
-    </Float>
+      <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.5}>
+        <group ref={group} dispose={null}>
+          <primitive object={scene} scale={2.4} position={[0, -0.2, 0]} />
+        </group>
+      </Float>
   )
 }
 
@@ -40,11 +40,11 @@ useGLTF.preload('/models/aquaflow.glb')
 
 export function AquaHeroModel() {
   return (
-    <div className="relative w-full h-[460px] md:h-[560px]">
+    <div className="relative w-full h-[600px] md:h-[720px] xl:h-[820px]">
       <Canvas
         shadows
         dpr={[1, 2]}
-        camera={{ position: [3, 1.5, 4], fov: 40 }}
+        camera={{ position: [2.6, 1.2, 3.4], fov: 38 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <ambientLight intensity={0.5} />
