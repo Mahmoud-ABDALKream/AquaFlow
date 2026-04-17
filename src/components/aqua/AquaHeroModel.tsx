@@ -44,7 +44,7 @@ export function AquaHeroModel() {
       <Canvas
         shadows
         dpr={[1, 2]}
-        camera={{ position: [2.2, 1.0, 2.8], fov: 35 }}
+        camera={{ position: [1.8, 0.8, 2.3], fov: 32 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <ambientLight intensity={0.5} />
