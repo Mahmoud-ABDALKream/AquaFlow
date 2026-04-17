@@ -213,8 +213,8 @@ export function AquaHero() {
           transition={{ duration: 1, delay: 0.3 }}
           className="hidden lg:flex justify-center"
         >
-          <div className="relative w-full max-w-[820px]">
-            <div className="absolute inset-0 bg-[#00d4ff]/20 rounded-full blur-[140px]" />
+          <div className="relative w-full max-w-[560px]">
+            <div className="absolute inset-0 bg-[#00d4ff]/20 rounded-full blur-[120px]" />
             <div className="relative z-10">
               <AquaHeroModel />
             </div>
