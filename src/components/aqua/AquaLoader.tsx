@@ -51,11 +51,14 @@ export function AquaLoader({ onComplete, duration = 4600 }: AquaLoaderProps) {
     }
   }, [duration, onComplete])
 
-  const phaseIndex = Math.min(
-    PHASES.length - 1,
-    Math.floor((progress / 100) * PHASES.length),
+  const phaseIndex = Math.max(
+    0,
+    Math.min(
+      PHASES.length - 1,
+      Math.floor((progress / 100) * PHASES.length),
+    ),
   )
-  const phase = PHASES[phaseIndex]
+  const phase = PHASES[phaseIndex] ?? PHASES[0]
 
   // Live-feel telemetry values driven by progress
   const flow = (12 + Math.sin(progress / 6) * 4 + progress * 0.18).toFixed(1)
