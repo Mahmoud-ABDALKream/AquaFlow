@@ -40,7 +40,7 @@ useGLTF.preload('/models/aquaflow.glb')
 
 export function AquaHeroModel() {
   return (
-    <div className="relative w-full h-[460px] md:h-[560px]">
+    <div className="relative w-full h-[360px] md:h-[440px]">
       <Canvas
         shadows
         dpr={[1, 2]}

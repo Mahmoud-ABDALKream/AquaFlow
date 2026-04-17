@@ -161,7 +161,7 @@ export function AquaHero() {
       {/* Hero content (parallax + fade on scroll) */}
       <motion.div
         style={{ y: contentY, opacity: contentOpacity }}
-        className="relative z-10 max-w-7xl mx-auto px-6 py-32 grid lg:grid-cols-2 gap-12 items-center w-full"
+        className="relative z-10 max-w-7xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-8 items-center w-full"
       >
         <motion.div
           initial={{ opacity: 0, x: -50 }}
@@ -213,8 +213,8 @@ export function AquaHero() {
           transition={{ duration: 1, delay: 0.3 }}
           className="hidden lg:flex justify-center"
         >
-          <div className="relative w-full max-w-[560px]">
-            <div className="absolute inset-0 bg-[#00d4ff]/20 rounded-full blur-[120px]" />
+          <div className="relative w-full max-w-[440px]">
+            <div className="absolute inset-0 bg-[#00d4ff]/20 rounded-full blur-[100px]" />
             <div className="relative z-10">
               <AquaHeroModel />
             </div>
