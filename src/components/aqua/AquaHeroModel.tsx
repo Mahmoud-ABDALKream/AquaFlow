@@ -40,11 +40,11 @@ useGLTF.preload('/models/aquaflow.glb')
 
 export function AquaHeroModel() {
   return (
-    <div className="relative w-full h-[600px] md:h-[720px] xl:h-[820px]">
+    <div className="relative w-full h-[460px] md:h-[560px]">
       <Canvas
         shadows
         dpr={[1, 2]}
-        camera={{ position: [2.6, 1.2, 3.4], fov: 38 }}
+        camera={{ position: [2.2, 1.0, 2.8], fov: 35 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <ambientLight intensity={0.5} />
