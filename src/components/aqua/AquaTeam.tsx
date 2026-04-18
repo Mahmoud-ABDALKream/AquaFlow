@@ -7,7 +7,7 @@ const team = [
     name: 'Mahmoud Abdelkarim',
     role: 'CEO & Product Lead',
     link: 'https://www.linkedin.com/in/mahmoud-ahmed-abdelkream/',
-    bio: 'Passionate about building products that provide solutions. Over 10 years of experience in product management and software development.',
+    bio: 'Passionate about building products that provide solutions. Over 3 years of experience in product management and software development.',
     skills: ['Product Management', 'Leadership', 'Agile']
   },
   {
