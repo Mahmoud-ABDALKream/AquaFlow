@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { AquaLoader } from './components/aqua/AquaLoader'
 import { AquaHero } from './components/aqua/AquaHero'
-import { AquaDeviceShowcase } from './components/aqua/AquaDeviceShowcase'
 import { AquaAbout } from './components/aqua/AquaAbout'
 import { AquaProblem } from './components/aqua/AquaProblem'
 import { AquaFeatures } from './components/aqua/AquaFeatures'
@@ -35,7 +34,6 @@ export default function App() {
       <AquaNav />
       <main>
         <AquaHero />
-        <AquaDeviceShowcase />
         <AquaAbout />
         <AquaProblem />
         <AquaFeatures />
