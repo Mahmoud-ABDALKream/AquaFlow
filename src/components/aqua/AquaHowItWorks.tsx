@@ -12,7 +12,7 @@ const steps = [
   {
     icon: Wifi,
     title: 'Connect to Wi-Fi',
-    desc: 'Use the Aqua Flow app to connect your device to your home network in just a few simple steps.',
+    desc: 'Use the Aqua Flow app to connect your IoT device to your home network in just a few simple steps.',
     color: 'from-cyan-400 to-teal-400'
   },
   {
@@ -24,7 +24,7 @@ const steps = [
   {
     icon: Bell,
     title: 'Stay Protected',
-    desc: 'The system automatically detects leaks and can shut off the water to prevent costly damage.',
+    desc: 'The smart system automatically detects leaks and can shut off the water to prevent costly damage.',
     color: 'from-emerald-400 to-green-400'
   }
 ]
@@ -44,15 +44,14 @@ export function AquaHowItWorks() {
         >
           <h2 className="text-sm font-semibold tracking-widest uppercase text-[#00d4ff] mb-3">Workflow</h2>
           <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-            Simple Setup, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#14b8a6]">Powerful Protection</span>
+            Simple Setup, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00d4ff] to-[#14b8a6]">IoT Water Monitoring</span>
           </h3>
           <p className="text-slate-400 text-lg">
-            Getting started with Aqua Flow is quick and easy. Follow these steps to transform your home's water management.
+            Getting started with our smart water management system is quick and easy. Follow these steps to transform your home's water monitoring.
           </p>
         </motion.div>
 
         <div className="relative">
-          {/* Connection Line (Desktop) */}
           <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-slate-800 to-transparent -translate-y-1/2 z-0" />
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
@@ -66,10 +65,9 @@ export function AquaHowItWorks() {
               >
                 <div className="flex flex-col items-center text-center">
                   <div className="relative mb-8">
-                    {/* Circle Background */}
                     <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${step.color} opacity-20 group-hover:opacity-30 transition-opacity blur-xl absolute inset-0 -m-2`} />
                     <div className="w-16 h-16 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center relative z-10 group-hover:border-[#00d4ff]/50 transition-colors shadow-2xl">
-                      <step.icon className="w-8 h-8 text-[#00d4ff]" />
+                      <step.icon className="w-8 h-8 text-[#00d4ff]" aria-hidden="true" />
                       <span className="absolute -top-2 -right-2 w-7 h-7 bg-[#00d4ff] text-slate-950 text-xs font-black rounded-full flex items-center justify-center border-2 border-slate-950">
                         0{i + 1}
                       </span>
