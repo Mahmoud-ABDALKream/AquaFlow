@@ -10,7 +10,7 @@ export function AquaFooter() {
             <div className="flex items-center gap-3 mb-4">
               <img src={logo} alt="Aqua Flow" className="h-12 w-auto object-contain" />
               <span className="font-bold text-lg" style={{ fontFamily: 'Space Grotesk' }}>
-                Aqua<span className="text-[#00d4ff]">Flow</span>
+                Aqua<span className="text-[#00d4ff]"> Flow</span>
               </span>
             </div>
             <p className="text-white/60 text-sm leading-relaxed">
