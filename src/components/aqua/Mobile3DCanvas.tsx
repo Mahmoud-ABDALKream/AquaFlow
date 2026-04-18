@@ -5,7 +5,7 @@ import * as THREE from 'three'
 
 function Model() {
   const group = useRef<THREE.Group>(null)
-  const { scene } = useGLTF('/models/aquaflow.glb')
+  const { scene } = useGLTF('/models/aquaflow-mobile.glb')
 
   useFrame((_, delta) => {
     if (group.current) group.current.rotation.y += delta * 0.18
@@ -36,7 +36,7 @@ function Loader() {
   )
 }
 
-useGLTF.preload('/models/aquaflow.glb')
+useGLTF.preload('/models/aquaflow-mobile.glb')
 
 export function Mobile3DCanvas() {
   return (
