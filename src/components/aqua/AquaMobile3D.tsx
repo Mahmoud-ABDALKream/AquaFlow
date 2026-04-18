@@ -90,7 +90,7 @@ export function AquaMobile3D() {
         >
           {/* Aspect-ratio safe container */}
           <div className="relative w-full aspect-square sm:aspect-[4/3] max-h-[70vh]">
-            {inView && !prefersReducedMotion ? (
+            {inView ? (
               <Suspense
                 fallback={
                   <div className="absolute inset-0 flex items-center justify-center">
