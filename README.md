@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+# AquaFlow
+[![Ask DeepWiki](https://devin.ai/assets/askdeepwiki.png)](https://deepwiki.com/Mahmoud-ABDALKream/AquaFlow)
 
-## Project info
+AquaFlow is a sophisticated, interactive landing page for a smart water management system. It showcases an IoT-based product designed to help households and businesses monitor, control, and conserve water in real-time through a combination of hardware sensors and a mobile application.
 
-**URL**: https://lovable.dev/projects/1169db3a-30f3-49bc-bd0b-9cda42ae0ebe
+The application features a visually rich, animated user interface with complex 3D models, smooth parallax scrolling effects, and a detailed breakdown of the product's features, impact, and technology.
 
-## How can I edit this code?
+## Key Features
 
-There are several ways of editing your application.
+*   **Interactive 3D Product Models:** Explore the AquaFlow device in 3D, with separate, optimized models for desktop (`aquaflow.glb`) and mobile (`aquaflow-mobile.glb`). Powered by React Three Fiber and Drei.
+*   **Animated & Immersive UI:** A fluid user experience with animations powered by Framer Motion, including a custom loading screen, parallax scrolling effects, and dynamic UI elements.
+*   **Comprehensive Product Showcase:** The landing page is divided into clear sections detailing the project:
+    *   **Problem & Solution:** Outlines the challenges of water waste and how AquaFlow addresses them.
+    *   **Features:** Details core functionalities like real-time monitoring, leak detection, and smart scheduling.
+    *   **How It Works:** A step-by-step guide to installing and using the system.
+    *   **Mobile App:** A showcase of the companion React Native application's screens and capabilities.
+    *   **Impact:** Presents data-driven statistics on water and cost savings.
+*   **Responsive Design:** A fully responsive layout that adapts to all screen sizes, with specific components and 3D models for mobile devices.
+*   **Component-Based Architecture:** Built with a clean, modular structure using reusable React components and UI elements from `shadcn/ui`.
 
-**Use Lovable**
+## Technology Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1169db3a-30f3-49bc-bd0b-9cda42ae0ebe) and start prompting.
+*   **Framework:** [React](https://reactjs.org/) with [Vite](https://vitejs.dev/)
+*   **Language:** [TypeScript](https://www.typescriptlang.org/)
+*   **Styling:** [Tailwind CSS](https://tailwindcss.com/) with [shadcn/ui](https://ui.shadcn.com/) for components.
+*   **3D Rendering:** [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) & [Drei](https://github.com/pmndrs/drei)
+*   **Animation:** [Framer Motion](https://www.framer.com/motion/)
+*   **Hardware/Backend Concept:** The project is designed around an **ESP32** microcontroller and leverages **Firebase** for cloud database and authentication services.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Project Structure
 
-**Use your preferred IDE**
+The project is organized with a clear and scalable structure:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+src/
+├── assets/         # Static assets like images
+├── components/
+│   ├── aqua/       # Core components for each section of the landing page
+│   ├── ui/         # Reusable UI components from shadcn/ui
+│   └── ...
+├── hooks/          # Custom React hooks
+├── lib/            # Utility functions
+├── public/
+│   └── models/     # 3D models in .glb format
+└── App.tsx         # Main application component
 ```
 
-**Edit a file directly in GitHub**
+## Getting Started
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+To get a local copy up and running, follow these simple steps.
 
-**Use GitHub Codespaces**
+### Prerequisites
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Ensure you have Node.js (v18 or later) and npm installed on your machine.
 
-## What technologies are used for this project?
+### Installation & Setup
 
-This project is built with:
+1.  **Clone the repository:**
+    ```sh
+    git clone https://github.com/mahmoud-abdalkream/aquaflow.git
+    ```
+2.  **Navigate to the project directory:**
+    ```sh
+    cd aquaflow
+    ```
+3.  **Install NPM packages:**
+    ```sh
+    npm install
+    ```
+4.  **Run the development server:**
+    ```sh
+    npm run dev
+    ```
+    The application will be available at `http://localhost:8080`.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Available Scripts
 
-## How can I deploy this project?
+In the project directory, you can run the following commands:
 
-Simply open [Lovable](https://lovable.dev/projects/1169db3a-30f3-49bc-bd0b-9cda42ae0ebe) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+*   `npm run dev`: Starts the development server with hot-reloading.
+*   `npm run build`: Bundles the app for production into the `dist` folder.
+*   `npm run lint`: Lints the source code using ESLint.
+*   `npm run preview`: Serves the production build locally to preview before deployment.
