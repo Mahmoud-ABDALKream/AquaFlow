@@ -1,52 +1,55 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import React from 'react';
 
-const members = [
-  { name: 'Mohamed Hassan', role: 'Finance Manager', initials: 'MH' },
-  { name: 'Mohannad', role: 'Marketing & Financial Manager', initials: 'MN' },
-  { name: 'Mahmoud Abdelkarim', role: 'Quality Manager', initials: 'MA' },
-  { name: 'Younes', role: 'Inventory & Sales Manager', initials: 'YN' },
-]
-
-const colors = ['from-[#0a6abf] to-[#00d4ff]', 'from-[#14b8a6] to-[#00d4ff]', 'from-[#003566] to-[#0a6abf]', 'from-[#00d4ff] to-[#14b8a6]']
-
-export function AquaTeam() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-100px' })
-
+const AquaTeam = () => {
   return (
-    <section id="team" className="py-24 lg:py-32 bg-muted/50" ref={ref}>
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <p className="text-sm font-semibold tracking-widest uppercase text-primary mb-3">The Team</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-            Meet the <span className="text-primary">Innovators</span>
-          </h2>
-        </motion.div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {members.map((m, i) => (
-            <motion.div
-              key={m.name}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.15 + i * 0.1 }}
-              className="p-8 rounded-2xl bg-card border border-border text-center hover:shadow-xl hover:border-primary/30 transition-all duration-300 group"
-            >
-              <div className={`w-20 h-20 rounded-full bg-gradient-to-br ${colors[i]} flex items-center justify-center mx-auto mb-5 text-white text-2xl font-bold shadow-lg`}>
-                {m.initials}
-              </div>
-              <h3 className="font-bold text-lg mb-1">{m.name}</h3>
-              <p className="text-muted-foreground text-sm">{m.role}</p>
-            </motion.div>
-          ))}
+    <div className="team-section">
+      <h2>Our Team</h2>
+      <div className="team-member">
+        <h3>Mahmoud Abdelkarim</h3>
+        <p>CEO & Product Lead</p>
+        <a href="https://www.linkedin.com/in/mahmoud-ahmed-abdelkream/">LinkedIn Profile</a>
+        <p>Passionate about building products that provide solutions. Over 10 years of experience in product management and software development.</p>
+        <div className="skills">
+          <span className="badge">Product Management</span>
+          <span className="badge">Leadership</span>
+          <span className="badge">Agile</span>
         </div>
       </div>
-    </section>
-  )
-}
+      <div className="team-member">
+        <h3>Mohannad Abdo</h3>
+        <p>Marketing & Business Lead</p>
+        <a href="https://www.linkedin.com/in/mohand-abdo-linkedeffe233/">LinkedIn Profile</a>
+        <p>A skilled marketer and business strategist with a knack for driving growth and engagement.</p>
+        <div className="skills">
+          <span className="badge">Digital Marketing</span>
+          <span className="badge">Business Development</span>
+          <span className="badge">SEO</span>
+        </div>
+      </div>
+      <div className="team-member">
+        <h3>Yunus Abdelghaffar</h3>
+        <p>Product Owner</p>
+        <a href="https://www.linkedin.com/in/yunus-abdelghaffar-49631231a/">LinkedIn Profile</a>
+        <p>Expert in turning customer needs into actionable product deliverables with a strong focus on results.</p>
+        <div className="skills">
+          <span className="badge">Product Ownership</span>
+          <span className="badge">Customer Relations</span>
+          <span className="badge">User Experience</span>
+        </div>
+      </div>
+      <div className="team-member">
+        <h3>Mohammed Hassan</h3>
+        <p>Financial & Tech Lead</p>
+        <a href="https://www.linkedin.com/in/muhammed-hassan-418b3a2b4/">LinkedIn Profile</a>
+        <p>A finance and technology expert with a deep understanding of financial systems and their integration with tech solutions.</p>
+        <div className="skills">
+          <span className="badge">Financial Analysis</span>
+          <span className="badge">Tech Solutions</span>
+          <span className="badge">Data Management</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AquaTeam;
