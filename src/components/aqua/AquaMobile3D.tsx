@@ -1,7 +1,7 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { Suspense, lazy, useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
-// Lazy-load the heavy 3D canvas only when this section is needed
+// Lazy-load the heavy 3D canvas chunk
 const Mobile3DCanvas = lazy(() =>
   import('./Mobile3DCanvas').then((m) => ({ default: m.Mobile3DCanvas }))
 )
@@ -18,32 +18,8 @@ function useIsTouchDevice() {
   return isTouch
 }
 
-function useInView<T extends HTMLElement>(rootMargin = '200px') {
-  const ref = useRef<T | null>(null)
-  const [inView, setInView] = useState(false)
-  useEffect(() => {
-    if (!ref.current || inView) return
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setInView(true)
-            io.disconnect()
-          }
-        })
-      },
-      { rootMargin }
-    )
-    io.observe(ref.current)
-    return () => io.disconnect()
-  }, [inView, rootMargin])
-  return { ref, inView }
-}
-
 export function AquaMobile3D() {
   const isTouch = useIsTouchDevice()
-  const prefersReducedMotion = useReducedMotion()
-  const { ref, inView } = useInView<HTMLDivElement>('150px')
 
   // Desktop: render nothing — keeps layout unchanged
   if (!isTouch) return null
@@ -81,41 +57,30 @@ export function AquaMobile3D() {
         </motion.div>
 
         <motion.div
-          ref={ref}
           initial={{ opacity: 0, scale: 0.96 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-50px' }}
           transition={{ duration: 0.9, ease: 'easeOut' }}
           className="relative rounded-3xl border border-[#00d4ff]/20 bg-gradient-to-b from-[#001428]/80 to-[#000a14]/80 backdrop-blur-xl overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,212,255,0.25)]"
         >
-          {/* Aspect-ratio safe container */}
           <div className="relative w-full aspect-square sm:aspect-[4/3] max-h-[70vh]">
-            {inView ? (
-              <Suspense
-                fallback={
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-10 h-10 border-2 border-[#00d4ff]/30 border-t-[#00d4ff] rounded-full animate-spin" />
+            <Suspense
+              fallback={
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center px-6">
+                    <div className="w-10 h-10 mx-auto mb-3 border-2 border-[#00d4ff]/30 border-t-[#00d4ff] rounded-full animate-spin" />
+                    <p className="text-[10px] text-foreground/50 font-mono tracking-[0.25em]">
+                      LOADING 3D...
+                    </p>
                   </div>
-                }
-              >
-                <Mobile3DCanvas />
-              </Suspense>
-            ) : (
-              // Fallback for reduced motion or before lazy-load
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center px-6">
-                  <div className="w-24 h-24 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#00d4ff]/30 to-[#0066ff]/20 border border-[#00d4ff]/30 flex items-center justify-center">
-                    <span className="text-3xl">💧</span>
-                  </div>
-                  <p className="text-xs text-foreground/50 font-mono">
-                    {prefersReducedMotion ? 'STATIC PREVIEW' : 'LOADING...'}
-                  </p>
                 </div>
-              </div>
-            )}
+              }
+            >
+              <Mobile3DCanvas />
+            </Suspense>
 
             {/* Gesture hint */}
-            <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-[#00d4ff]/20">
+            <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-[#00d4ff]/20 z-10">
               <span className="text-[10px] font-mono tracking-[0.25em] text-[#00d4ff]/80">
                 DRAG TO EXPLORE
               </span>
